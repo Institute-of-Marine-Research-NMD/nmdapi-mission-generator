@@ -24,7 +24,6 @@ public class SimpleLoader {
     public static void main(String[] argv){
         
         
-        LOGGER.debug(argv[0]);
      AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 
     ConfigurableEnvironment env = new StandardEnvironment();
