@@ -22,17 +22,19 @@ import no.imr.nmdapi.client.loader.dao.PlatformCodes;
 import no.imr.nmdapi.client.loader.dao.Platform;
 import no.imr.nmdapi.client.loader.dao.Datatypes;
 import no.imr.nmdapi.client.loader.pojo.TypeValue;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.util.FileSystemUtils;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant 
  */
 public class DatasetXMLWriter implements RowCallbackHandler {
 
@@ -48,10 +50,10 @@ public class DatasetXMLWriter implements RowCallbackHandler {
     Datatypes datatypeDAO;
     @Autowired
     Platform platformDAO;
+
     @Autowired
-    String basePath;
-    @Autowired
-    String baseErrorPath;
+    @Qualifier("cruiseloaderConfig")
+    private PropertiesConfiguration config;
 
     int totalCount;
     private int percentStep;
@@ -72,9 +74,9 @@ public class DatasetXMLWriter implements RowCallbackHandler {
         ctx = JAXBContext.newInstance("no.imr.nmd.commons.dataset.jaxb");
         datasetsMarshaller = ctx.createMarshaller();
 
-        FileSystemUtils.deleteRecursively(new File(basePath));
+        FileSystemUtils.deleteRecursively(new File(config.getString("output.path")));
         if (deleteErrors) {
-            FileSystemUtils.deleteRecursively(new File(baseErrorPath));
+            FileSystemUtils.deleteRecursively(new File(config.getString("error.path")));
         }
     }
 
@@ -217,7 +219,7 @@ public class DatasetXMLWriter implements RowCallbackHandler {
 
     private File mapFilename(String missionType, String year, String platformCode, String delivery, String dataType) {
 
-        String path = basePath + File.separator
+        String path = config.getString("output.path") + File.separator
                 + missionType + File.separator
                 + year + File.separator
                 + platformCode + File.separator
@@ -238,7 +240,7 @@ public class DatasetXMLWriter implements RowCallbackHandler {
     private void writeToProblemFile(CruiseType cruise, String missionType, String platformCode, String delivery, String missionID, String problem) {
         File file;
 
-        File fullPath = new File(baseErrorPath + File.separator + problem);
+        File fullPath = new File(config.getString("error.path") + File.separator + problem);
 
         if (!fullPath.exists()) {
             fullPath.mkdirs();

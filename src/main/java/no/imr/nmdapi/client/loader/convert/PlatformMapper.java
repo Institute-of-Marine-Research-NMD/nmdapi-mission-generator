@@ -7,10 +7,11 @@ import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant 
  */
 public class PlatformMapper implements RowMapper<TypeValue> {
 
+    @Override
     public TypeValue mapRow(ResultSet rs, int rowNum) throws SQLException {
         TypeValue platform = new TypeValue();
 

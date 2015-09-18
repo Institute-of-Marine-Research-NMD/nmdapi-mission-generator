@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant
  */
 public class XMLTypeConverter {
 

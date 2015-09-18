@@ -1,1 +1,3 @@
 /target/
+/src/main/resources/tomcatconf/s2d_connection.properties
+/src/main/tomcatconf/s2d_connection.properties

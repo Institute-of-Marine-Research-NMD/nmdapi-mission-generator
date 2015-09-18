@@ -7,10 +7,11 @@ import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant 
  */
 public class CruiseMapper  implements RowMapper<CruiseInfo> {
     
+    @Override
     public CruiseInfo  mapRow(ResultSet rs, int rowNum) throws SQLException {
         CruiseInfo cruise = new CruiseInfo();
         

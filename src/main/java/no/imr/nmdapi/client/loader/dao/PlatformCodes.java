@@ -1,12 +1,9 @@
 package no.imr.nmdapi.client.loader.dao;
 
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.PlatformInfoType;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.PlatformType;
 import no.imr.nmdapi.client.loader.convert.PlatformMapper;
 import no.imr.nmdapi.client.loader.pojo.TypeValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant
  */
 public class PlatformCodes {
 
@@ -25,7 +22,7 @@ public class PlatformCodes {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    private String baseQueryString = " select platformcode , "
+    private final String baseQueryString = " select platformcode , "
             + "pcs.platformcodesysname as platformcodesysname  "
             + "from nmdreference.platformcode pc,"
             + " nmdreference.platformcodesys pcs,"
@@ -36,7 +33,7 @@ public class PlatformCodes {
             + " and m.start_time >= pc.firstvaliddate  "
             + " order by   pc.firstvaliddate ";
 
-    private String invertBaseQueryString = " select platformcode , "
+    private final String invertBaseQueryString = " select platformcode , "
             + "pcs.platformcodesysname as platformcodesysname  "
             + "from nmdreference.platformcode pc,"
             + " nmdreference.platformcodesys pcs,"

@@ -8,18 +8,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant
  */
 public class Cruise {
-    
+
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-    
-    private String baseQueryString = " select cruisecode, "
+
+    private final String baseQueryString = " select cruisecode, "
             + " departureport,"
             + " arrivalport,"
             + " beicruiseno,"
@@ -30,12 +30,9 @@ public class Cruise {
             + "   where id_mission = ?"
             + ") cm "
             + " left outer join nmdreference.person p on cm.id_r_cruiseleader = p.id";
-    
-  
-    public  CruiseInfo getMissionCruise(String missionID){
-        return jdbcTemplate.queryForObject(baseQueryString,new CruiseMapper(),missionID);
-     }
 
+    public CruiseInfo getMissionCruise(String missionID) {
+        return jdbcTemplate.queryForObject(baseQueryString, new CruiseMapper(), missionID);
+    }
 
-   
 }

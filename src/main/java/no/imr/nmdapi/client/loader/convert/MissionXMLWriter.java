@@ -10,13 +10,12 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.DatatypeElementType;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.DatatypesListElementType;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.ExistsEnum;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.MissionType;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.PlatformType;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.PlatformInfoType;
-import no.imr.nmdapi.generic.nmdmission.domain.v1.QualityEnum;
+import no.imr.nmd.commons.cruise.jaxb.CruiseType;
+import no.imr.nmd.commons.cruise.jaxb.DatasetType;
+import no.imr.nmd.commons.cruise.jaxb.ExistsEnum;
+import no.imr.nmd.commons.cruise.jaxb.PlatformInfoType;
+import no.imr.nmd.commons.cruise.jaxb.PlatformType;
+import no.imr.nmd.commons.cruise.jaxb.DatasetsType;
 
 import no.imr.nmdapi.client.loader.pojo.CruiseInfo;
 import no.imr.nmdapi.client.loader.dao.Cruise;
@@ -24,16 +23,18 @@ import no.imr.nmdapi.client.loader.dao.PlatformCodes;
 import no.imr.nmdapi.client.loader.dao.Platform;
 import no.imr.nmdapi.client.loader.dao.Datatypes;
 import no.imr.nmdapi.client.loader.pojo.TypeValue;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.util.FileSystemUtils;
 
 /**
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant 
  */
 public class MissionXMLWriter implements RowCallbackHandler {
 
@@ -42,21 +43,21 @@ public class MissionXMLWriter implements RowCallbackHandler {
     private static final String NOPLATFORM = "NOPLATFORMCODES";
 
     @Autowired
-    PlatformCodes platformCodeDAO;
+    private PlatformCodes platformCodeDAO;
     @Autowired
-    Cruise cruiseDAO;
+    private Cruise cruiseDAO;
     @Autowired
-    Datatypes datatypeDAO;
+    private Datatypes datatypeDAO;
     @Autowired
-    Platform platformDAO;
-    @Autowired
-    String basePath;
-    @Autowired
-    String baseErrorPath;
+    private Platform platformDAO;
 
-    int totalCount;
+    @Autowired
+    @Qualifier("cruiseloaderConfig")
+    private PropertiesConfiguration config;
+
+    private int totalCount;
     private int percentStep;
-    XMLTypeConverter xmlTypeConverter;
+    private final XMLTypeConverter xmlTypeConverter;
     private int rowCount;
     private Marshaller marshaller;
 
@@ -66,11 +67,11 @@ public class MissionXMLWriter implements RowCallbackHandler {
     }
 
     public void init(boolean deleteErrors) throws JAXBException {
-        JAXBContext ctx = JAXBContext.newInstance("no.imr.nmdapi.generic.nmdmission.domain.v1");
+        JAXBContext ctx = JAXBContext.newInstance("no.imr.nmd.commons.cruise.jaxb");
         marshaller = ctx.createMarshaller();
-        FileSystemUtils.deleteRecursively(new File(basePath));
+        FileSystemUtils.deleteRecursively(new File(config.getString("output.path")));
         if (deleteErrors) {
-            FileSystemUtils.deleteRecursively(new File(baseErrorPath));
+            FileSystemUtils.deleteRecursively(new File(config.getString("error.path")));
         }
     }
 
@@ -88,16 +89,16 @@ public class MissionXMLWriter implements RowCallbackHandler {
 
         rowCount++;
 
-        MissionType mission = new MissionType();
+        CruiseType mission = new CruiseType();
 
         mission.setMissionNumber(BigInteger.valueOf(rs.getInt("missionnumber")));
-        mission.setDatapath(rs.getString("datapath"));
+//        mission.setDatapath(rs.getString("datapath"));
         mission.setStartyear(BigInteger.valueOf(rs.getInt("startyear")));
         mission.setStartTime(xmlTypeConverter.convertDate(rs.getDate("start_time")));
         mission.setStopTime(xmlTypeConverter.convertDate(rs.getDate("stop_time")));
 
         //Create purpose 
-        MissionType.Purpose purpose = new MissionType.Purpose();
+        CruiseType.Purpose purpose = new CruiseType.Purpose();
         purpose.setLang("no");  //TODO How should this be really set? Parse for norsk special chars?
         purpose.setValue(rs.getString("purpose"));
         mission.getPurpose().add(purpose);
@@ -132,15 +133,15 @@ public class MissionXMLWriter implements RowCallbackHandler {
         String platformPath = createPlatformURICode(platformMap);
 
         //Data types
-        DatatypesListElementType types = new DatatypesListElementType();
+        DatasetsType types = new DatasetsType();
 
         boolean hasBiotic = (datatypeDAO.countBiotic(missionID) > 0);
         boolean hasEchosouder = (datatypeDAO.countEchoSounder(missionID) > 0);
 
-        types.getDatatype().add(getDataType("biotic", "", hasBiotic ? ExistsEnum.YES : ExistsEnum.NO));
-        types.getDatatype().add(getDataType("echosounder", "", hasEchosouder ? ExistsEnum.YES : ExistsEnum.NO));
+        types.getDataset().add(getDataType("biotic", "", hasBiotic ? ExistsEnum.YES : ExistsEnum.NO));
+        types.getDataset().add(getDataType("echosounder", "", hasEchosouder ? ExistsEnum.YES : ExistsEnum.NO));
 
-        mission.setDatatypes(types);
+        mission.setDatasets(types);
 
         String delivery;
         //Map delivery ident
@@ -186,9 +187,9 @@ public class MissionXMLWriter implements RowCallbackHandler {
         LOG.info("Total missions proccessed ", rowCount);
     }
 
-    private File mapToFile(MissionType mission, String missionType, String platformCode, String delivery) {
+    private File mapToFile(CruiseType mission, String missionType, String platformCode, String delivery) {
 
-        File fullPath = new File(basePath + File.separator
+        File fullPath = new File(config.getString("output.path") + File.separator
                 + missionType + File.separator
                 + mission.getStartyear().toString() + File.separator
                 + platformCode + File.separator
@@ -202,10 +203,10 @@ public class MissionXMLWriter implements RowCallbackHandler {
         return new File(fullPath, "data.xml");
     }
 
-    private void writeToProblemFile(MissionType mission, String missionType, String platformCode, String delivery, String missionID, String problem) {
+    private void writeToProblemFile(CruiseType mission, String missionType, String platformCode, String delivery, String missionID, String problem) {
         File file;
 
-        File fullPath = new File(baseErrorPath + File.separator + problem);
+        File fullPath = new File(config.getString("error.path") + File.separator + problem);
 
         if (!fullPath.exists()) {
             fullPath.mkdirs();
@@ -218,11 +219,10 @@ public class MissionXMLWriter implements RowCallbackHandler {
         writeMission(file, mission);
     }
 
-    public DatatypeElementType getDataType(String type, String desc, ExistsEnum ex) {
-        DatatypeElementType datatypeElementType = new DatatypeElementType();
-        datatypeElementType.setName(type);
-        datatypeElementType.setQualityAssured(QualityEnum.NONE);
-        datatypeElementType.setExists(ex);
+    public DatasetType getDataType(String type, String desc, ExistsEnum ex) {
+        DatasetType datatypeElementType = new DatasetType();
+        datatypeElementType.setDataType(type);
+        datatypeElementType.setCollected(ex);
         return datatypeElementType;
     }
 
@@ -262,7 +262,7 @@ public class MissionXMLWriter implements RowCallbackHandler {
 
     }
 
-    private void writeMission(File file, MissionType mission) {
+    private void writeMission(File file, CruiseType mission) {
         try {
             marshaller.marshal(mission, file);
         } catch (JAXBException ex) {

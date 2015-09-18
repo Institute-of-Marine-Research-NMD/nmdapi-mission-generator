@@ -1,20 +1,18 @@
-/*
- * Simple pojp for all cruise info
- */
 package no.imr.nmdapi.client.loader.pojo;
 
 /**
+ * Simple pojp for all cruise info
  *
- * @author Terry Hannant <a5119>
+ * @author Terry Hannant
  */
 public class CruiseInfo {
-    
+
     private String cruiseCode;
-    
+
     private String departPort;
-    
+
     private String arrivalPort;
-    
+
     private String fullName;
 
     public String getFullName() {
@@ -48,8 +46,5 @@ public class CruiseInfo {
     public void setArrivalPort(String arrivalPort) {
         this.arrivalPort = arrivalPort;
     }
-    
 
-    
-    
 }
