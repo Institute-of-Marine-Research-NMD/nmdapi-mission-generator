@@ -1,6 +1,7 @@
 package no.imr.nmdapi.client.loader.config;
 
 import no.imr.nmdapi.client.loader.routes.InitRoute;
+import no.imr.nmdapi.client.loader.routes.RunRoute;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -44,8 +45,31 @@ public class ApplicationConfig {
         return configuration;
     }
 
+    /**
+     * Active mq configuration
+     *
+     * @return
+     * @throws ConfigurationException
+     */
+    @Bean(name = "activeMQConf")
+    public PropertiesConfiguration getActiveMQConfiguration() throws ConfigurationException {
+        PropertiesConfiguration conf = new PropertiesConfiguration(System.getProperty(CATALINA_BASE) + "/conf/activemq.properties");
+        conf.setReloadingStrategy(new FileChangedReloadingStrategy());
+        return conf;
+    }
+
+    /**
+     * Init route
+     *
+     * @return
+     */
     @Bean
     public InitRoute initRoute() {
         return new InitRoute();
+    }
+
+    @Bean
+    public RunRoute runRoute() {
+        return new RunRoute();
     }
 }

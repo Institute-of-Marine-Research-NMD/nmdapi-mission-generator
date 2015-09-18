@@ -3,6 +3,7 @@ package no.imr.nmdapi.client.loader.config;
 import javax.sql.DataSource;
 import no.imr.nmdapi.client.loader.convert.MissionXMLWriter;
 import no.imr.nmdapi.client.loader.dao.Cruise;
+import no.imr.nmdapi.client.loader.dao.CruiseStatusDAO;
 import no.imr.nmdapi.client.loader.dao.Datatypes;
 import no.imr.nmdapi.client.loader.dao.Mission;
 import no.imr.nmdapi.client.loader.dao.Platform;
@@ -66,5 +67,10 @@ public class PersistenceConfig {
     @Bean
     public Datatypes datatypes() {
         return new Datatypes();
+    }
+    
+    @Bean
+    public CruiseStatusDAO cruisestatus(){
+        return new CruiseStatusDAO();
     }
 }

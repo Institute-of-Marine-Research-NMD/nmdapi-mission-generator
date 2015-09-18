@@ -91,7 +91,7 @@
         <dependency>
             <groupId>no.imr.nmd.commons.cruise.jaxb</groupId>
             <artifactId>commons-cruise-jaxb</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -144,6 +144,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>no.imr.nmdapi.lib</groupId>
+            <artifactId>PathGenerator</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
+            <version>${activemq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>${activemq.version}</version>
+        </dependency>
     </dependencies>
     
     <build>
@@ -174,7 +189,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <port>8094</port>
+                    <port>8095</port>
                 </configuration>
             </plugin>
             <plugin>

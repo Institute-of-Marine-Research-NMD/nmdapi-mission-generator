@@ -23,6 +23,7 @@ public class Cruise {
             + " departureport,"
             + " arrivalport,"
             + " beicruiseno,"
+            + " originalsurveyno,"
             + "  firstname||' '||familyname as fullname"
             + " from ("
             + "    select  * "

@@ -4,7 +4,10 @@ import java.io.File;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -34,7 +37,7 @@ import org.springframework.util.FileSystemUtils;
 
 /**
  *
- * @author Terry Hannant 
+ * @author Terry Hannant
  */
 public class MissionXMLWriter implements RowCallbackHandler {
 
@@ -92,10 +95,11 @@ public class MissionXMLWriter implements RowCallbackHandler {
         CruiseType mission = new CruiseType();
 
         mission.setMissionNumber(BigInteger.valueOf(rs.getInt("missionnumber")));
-//        mission.setDatapath(rs.getString("datapath"));
+        mission.setDatapath(rs.getString("datapath"));
         mission.setStartyear(BigInteger.valueOf(rs.getInt("startyear")));
-        mission.setStartTime(xmlTypeConverter.convertDate(rs.getDate("start_time")));
-        mission.setStopTime(xmlTypeConverter.convertDate(rs.getDate("stop_time")));
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        mission.setStartTime(xmlTypeConverter.convertDate(rs.getTimestamp("start_time", cal)));
+        mission.setStopTime(xmlTypeConverter.convertDate(rs.getTimestamp("stop_time", cal)));
 
         //Create purpose 
         CruiseType.Purpose purpose = new CruiseType.Purpose();

@@ -18,8 +18,9 @@ public class CruiseMapper  implements RowMapper<CruiseInfo> {
         cruise.setArrivalPort(rs.getString("arrivalport"));
         cruise.setDepartPort(rs.getString("departureport"));
         cruise.setCruiseCode(rs.getString("cruisecode"));
-        
         cruise.setFullName(rs.getString("fullname"));
+        cruise.setBeicruiseno(rs.getInt("beicruiseno"));
+        cruise.setOrignalsurveyno(rs.getString("originalsurveyno"));
            
         return cruise;
     }

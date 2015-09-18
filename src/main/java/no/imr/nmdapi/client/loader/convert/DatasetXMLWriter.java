@@ -4,7 +4,10 @@ import java.io.File;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -100,8 +103,9 @@ public class DatasetXMLWriter implements RowCallbackHandler {
         cruise.setMissionNumber(BigInteger.valueOf(rs.getInt("missionnumber")));
         //  cruise.setd.setDatapath(rs.getString("datapath"));
         cruise.setStartyear(BigInteger.valueOf(rs.getInt("startyear")));
-        cruise.setStartTime(xmlTypeConverter.convertDate(rs.getDate("start_time")));
-        cruise.setStopTime(xmlTypeConverter.convertDate(rs.getDate("stop_time")));
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        cruise.setStartTime(xmlTypeConverter.convertDate(rs.getTimestamp("start_time", cal)));
+        cruise.setStopTime(xmlTypeConverter.convertDate(rs.getTimestamp("stop_time", cal)));
 
         //Create purpose 
         CruiseType.Purpose purpose = new CruiseType.Purpose();
