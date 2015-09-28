@@ -31,7 +31,7 @@ public class MissionTypeMapper implements RowMapper<CruiseType> {
         cruise.setStopTime(xmlTypeConverter.convertDate(rs.getTimestamp("stop_time", cal)));
         //responsible person missing
         cruise.setSpecificArea(rs.getString("specificarea"));
-        //Create purpose 
+
         CruiseType.Purpose purpose = new CruiseType.Purpose();
         purpose.setLang("no");  //TODO How should this be really set? Parse for norsk special chars?
         purpose.setValue(rs.getString("purpose"));

@@ -1,8 +1,8 @@
 package no.imr.nmdapi.client.loader.service;
 
-import javax.xml.bind.JAXBException;
-import no.imr.nmdapi.client.loader.convert.MissionXMLWriter;
+import java.util.List;
 import no.imr.nmdapi.client.loader.dao.Mission;
+import org.apache.camel.Exchange;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,24 +12,24 @@ import org.springframework.stereotype.Service;
  * @author sjurl
  */
 @Service("exportallCruises")
-public class ExportCruiseService {
+public class ExportCruiseService extends Exporter {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ExportCruiseService.class);
     @Autowired
     private Mission missionDAO;
 
-    @Autowired
-    private MissionXMLWriter missionWriter;
-
-    public void exportCruise() {
-        float totalCount = missionDAO.countAll();
-        missionWriter.setTotalCount(totalCount);
-        try {
-            missionWriter.init(true);
-        } catch (JAXBException ex) {
-            LOGGER.error("Init mission mapper", ex);
+    /**
+     * Exports all cruises from nmdmission.mission
+     *
+     * @param exchange
+     */
+    @Override
+    public void loadData(Exchange exchange) {
+        List<String> cruises = missionDAO.getAllCruiseId();
+        LOGGER.info("Export size: " + cruises.size());
+        for (String cruise : cruises) {
+            LOGGER.info("Exporting: " + cruise);
+            exportSingleCruise(cruise, missionDAO);
         }
-
-        missionDAO.proccessMissions(missionWriter);
     }
 }

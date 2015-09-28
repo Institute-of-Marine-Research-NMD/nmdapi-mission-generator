@@ -1,7 +1,6 @@
 package no.imr.nmdapi.client.loader.config;
 
 import javax.sql.DataSource;
-import no.imr.nmdapi.client.loader.convert.MissionXMLWriter;
 import no.imr.nmdapi.client.loader.dao.Cruise;
 import no.imr.nmdapi.client.loader.dao.CruiseStatusDAO;
 import no.imr.nmdapi.client.loader.dao.Datatypes;
@@ -44,10 +43,6 @@ public class PersistenceConfig {
         return new Mission();
     }
 
-    @Bean
-    public MissionXMLWriter missionXMLWriter() {
-        return new MissionXMLWriter();
-    }
 
     @Bean
     public Cruise cruise() {

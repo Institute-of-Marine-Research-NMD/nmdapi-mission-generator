@@ -1,6 +1,5 @@
 package no.imr.nmdapi.client.loader.convert;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;

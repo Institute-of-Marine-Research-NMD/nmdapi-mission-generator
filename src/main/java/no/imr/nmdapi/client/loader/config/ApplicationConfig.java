@@ -68,6 +68,11 @@ public class ApplicationConfig {
         return new InitRoute();
     }
 
+    /**
+     * Run Route
+     *
+     * @return
+     */
     @Bean
     public RunRoute runRoute() {
         return new RunRoute();
