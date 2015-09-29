@@ -47,7 +47,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 public abstract class Exporter {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Exporter.class);
-    
+
     private static final String DATASET_JAXB_PATH = "no.imr.nmd.commons.dataset.jaxb";
     private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
 
@@ -110,7 +110,7 @@ public abstract class Exporter {
         //Platform info
         Map<String, TypeValue> platformMap = platformCodeDAO.getMissionPlatformCodes(cruise.getId());
         Map<String, no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue> platMap = new HashMap<>();
-        if (platformMap.size() > 0) {
+        if (!platformMap.isEmpty()) {
             PlatformInfoType platformInfo = new PlatformInfoType();
             for (String platform : platformMap.keySet()) {
                 PlatformType platType = new PlatformType();
@@ -128,11 +128,11 @@ public abstract class Exporter {
         //Data types
         DatasetsType types = new DatasetsType();
 
-        boolean hasBiotic = (datatypeDAO.countBiotic(cruise.getId()) > 0);
-        boolean hasEchosouder = (datatypeDAO.countEchoSounder(cruise.getId()) > 0);
+        boolean hasBiotic = datatypeDAO.countBiotic(cruise.getId()) > 0;
+        boolean hasEchosouder = datatypeDAO.countEchoSounder(cruise.getId()) > 0;
 
-        types.getDataset().add(getDataType("biotic", "", hasBiotic ? ExistsEnum.YES : ExistsEnum.NO));
-        types.getDataset().add(getDataType("echosounder", "", hasEchosouder ? ExistsEnum.YES : ExistsEnum.NO));
+        types.getDataset().add(getDataType("biotic", hasBiotic ? ExistsEnum.YES : ExistsEnum.NO));
+        types.getDataset().add(getDataType("echosounder", hasEchosouder ? ExistsEnum.YES : ExistsEnum.NO));
 
         cruise.setDatasets(types);
 
@@ -210,7 +210,7 @@ public abstract class Exporter {
         }
     }
 
-    private DatasetType getDataType(String type, String desc, ExistsEnum ex) {
+    private DatasetType getDataType(String type, ExistsEnum ex) {
         DatasetType datatypeElementType = new DatasetType();
         datatypeElementType.setDataType(type);
         datatypeElementType.setCollected(ex);

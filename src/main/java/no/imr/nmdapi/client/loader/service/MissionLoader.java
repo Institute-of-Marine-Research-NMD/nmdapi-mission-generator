@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class MissionLoader extends Exporter {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MissionLoader.class);
+    private static final int MISSION_ID_LOCATION = 2;
 
     @Autowired
     private Mission missionDAO;
@@ -27,7 +28,7 @@ public class MissionLoader extends Exporter {
     @Override
     public void loadData(Exchange excahange) {
         String messageBody = excahange.getIn().getBody(String.class);
-        LOGGER.info(messageBody.split(",")[2]);
-        exportSingleCruise(messageBody.split(",")[2], missionDAO);
+        LOGGER.info(messageBody.split(",")[MISSION_ID_LOCATION]);
+        exportSingleCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
     }
 }

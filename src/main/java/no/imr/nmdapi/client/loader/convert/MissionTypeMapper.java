@@ -33,7 +33,8 @@ public class MissionTypeMapper implements RowMapper<CruiseType> {
         cruise.setSpecificArea(rs.getString("specificarea"));
 
         CruiseType.Purpose purpose = new CruiseType.Purpose();
-        purpose.setLang("no");  //TODO How should this be really set? Parse for norsk special chars?
+        //TODO How should this be really set? Parse for norsk special chars?
+        purpose.setLang("no");
         purpose.setValue(rs.getString("purpose"));
         cruise.getPurpose().add(purpose);
         cruise.setComments(rs.getString("comments"));

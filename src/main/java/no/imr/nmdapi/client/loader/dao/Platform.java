@@ -11,20 +11,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class Platform {
 
     private JdbcTemplate jdbcTemplate;
+    private static final String BASE_QUERY_STRING = " select platform  "
+            + "from nmdreference.platform p,"
+            + " nmdmission.mission m "
+            + " where p.id = m.id_r_platform"
+            + " and m.id =? ";
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    private final String baseQueryString = " select platform  "
-            + "from nmdreference.platform p,"
-            + " nmdmission.mission m "
-            + " where p.id = m.id_r_platform"
-            + " and m.id =? ";
-
     public String getMissionPlatform(String missionID) {
-        String queryString = baseQueryString;
+        String queryString = BASE_QUERY_STRING;
 
         return jdbcTemplate.queryForObject(queryString, String.class, missionID);
     }

@@ -13,13 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class Cruise {
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    private final String baseQueryString = " select cruisecode, "
+    private static final String BASE_QUERY_STRING = " select cruisecode, "
             + " departureport,"
             + " arrivalport,"
             + " beicruiseno,"
@@ -32,8 +26,13 @@ public class Cruise {
             + ") cm "
             + " left outer join nmdreference.person p on cm.id_r_cruiseleader = p.id";
 
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
     public CruiseInfo getMissionCruise(String missionID) {
-        return jdbcTemplate.queryForObject(baseQueryString, new CruiseMapper(), missionID);
+        return jdbcTemplate.queryForObject(BASE_QUERY_STRING, new CruiseMapper(), missionID);
     }
 
 }

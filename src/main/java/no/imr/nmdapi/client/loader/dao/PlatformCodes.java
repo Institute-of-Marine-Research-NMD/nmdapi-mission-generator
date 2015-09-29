@@ -16,13 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class PlatformCodes {
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    private final String baseQueryString = " select platformcode , "
+    private final static String BASE_QUERY_STRING = " select platformcode , "
             + "pcs.platformcodesysname as platformcodesysname  "
             + "from nmdreference.platformcode pc,"
             + " nmdreference.platformcodesys pcs,"
@@ -33,7 +27,7 @@ public class PlatformCodes {
             + " and m.start_time >= pc.firstvaliddate  "
             + " order by   pc.firstvaliddate ";
 
-    private final String invertBaseQueryString = " select platformcode , "
+    private final static String INVERTED_BASE_QUERY_STRING = " select platformcode , "
             + "pcs.platformcodesysname as platformcodesysname  "
             + "from nmdreference.platformcode pc,"
             + " nmdreference.platformcodesys pcs,"
@@ -44,9 +38,14 @@ public class PlatformCodes {
             + " and m.start_time < pc.firstvaliddate  "
             + " order by   pc.firstvaliddate ";
 
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
     public Map<String, TypeValue> getMissionPlatformCodes(String missionID) {
-        String queryString = baseQueryString;
-        HashMap<String, TypeValue> result = new HashMap<String, TypeValue>();
+        String queryString = BASE_QUERY_STRING;
+        Map<String, TypeValue> result = new HashMap<String, TypeValue>();
 
         //The query will return all platform codes that were valid before mission start.
         //Since we are ordering by firstvaliddate the last platform code of each type found wil be
@@ -61,8 +60,8 @@ public class PlatformCodes {
     }
 
     public Map<String, TypeValue> getMissionPlatformAfterStart(String missionID) {
-        String queryString = invertBaseQueryString;
-        HashMap<String, TypeValue> result = new HashMap<String, TypeValue>();
+        String queryString = INVERTED_BASE_QUERY_STRING;
+        Map<String, TypeValue> result = new HashMap<String, TypeValue>();
 
         List<TypeValue> platformList = jdbcTemplate.query(queryString, new PlatformMapper(), missionID);
         for (TypeValue platform : platformList) {

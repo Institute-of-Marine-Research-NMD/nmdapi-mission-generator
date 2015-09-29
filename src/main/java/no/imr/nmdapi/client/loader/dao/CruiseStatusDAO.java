@@ -15,14 +15,13 @@ import org.springframework.jdbc.core.RowMapper;
 public class CruiseStatusDAO {
 
     private JdbcTemplate jdbcTemplate;
+    private static final String QUERY = "select name from nmdreference.u_udplist "
+            + "where id = (select id_r_udplist_missionstatus from nmdmission.mission where id = ?)";
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-
-    private final String QUERY = "select name from nmdreference.u_udplist "
-            + "where id = (select id_r_udplist_missionstatus from nmdmission.mission where id = ?)";
 
     public String getCruiseStatus(String missionid) {
         List<String> result = jdbcTemplate.query(QUERY, new RowMapper<String>() {

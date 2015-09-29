@@ -15,12 +15,7 @@ public class Mission {
 
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    private final String GET_CRUISE = "SELECT m.id, m.missionnumber, m.start_time, m.stop_time, "
+    private static final String GET_CRUISE = "SELECT m.id, m.missionnumber, m.start_time, m.stop_time, "
             + "m.startyear, m.purpose, m.datapath, mt.code as missiontypecode, "
             + "mt.description as missiontype, m.specificarea, m.comments, m.reporturl from "
             + "nmdmission.mission m, "
@@ -28,8 +23,13 @@ public class Mission {
             + "where mt.id = m.id_r_missiontype "
             + "and m.id = ?";
 
-    private final String GET_MISSION_TYPE_NAME = "select mt.description from "
+    private static final String GET_MISSION_TYPE_NAME = "select mt.description from "
             + "nmdreference.missiontype mt where mt.code = ? ";
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
     public List<String> getAllCruiseId() {
         return jdbcTemplate.queryForList("SELECT id FROM nmdmission.mission", String.class);
