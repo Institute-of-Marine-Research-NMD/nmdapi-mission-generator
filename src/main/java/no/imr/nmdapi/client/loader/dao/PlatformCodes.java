@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class PlatformCodes {
 
     private JdbcTemplate jdbcTemplate;
-    private final static String BASE_QUERY_STRING = " select platformcode , "
+    private static final String BASE_QUERY_STRING = " select platformcode , "
             + "pcs.platformcodesysname as platformcodesysname  "
             + "from nmdreference.platformcode pc,"
             + " nmdreference.platformcodesys pcs,"
@@ -27,7 +27,7 @@ public class PlatformCodes {
             + " and m.start_time >= pc.firstvaliddate  "
             + " order by   pc.firstvaliddate ";
 
-    private final static String INVERTED_BASE_QUERY_STRING = " select platformcode , "
+    private static final String INVERTED_BASE_QUERY_STRING = " select platformcode , "
             + "pcs.platformcodesysname as platformcodesysname  "
             + "from nmdreference.platformcode pc,"
             + " nmdreference.platformcodesys pcs,"
