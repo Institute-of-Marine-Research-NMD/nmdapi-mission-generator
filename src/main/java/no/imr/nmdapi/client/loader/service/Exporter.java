@@ -20,6 +20,7 @@ import no.imr.nmd.commons.cruise.jaxb.DatasetsType;
 import no.imr.nmd.commons.cruise.jaxb.ExistsEnum;
 import no.imr.nmd.commons.cruise.jaxb.PlatformInfoType;
 import no.imr.nmd.commons.cruise.jaxb.PlatformType;
+import no.imr.nmd.commons.cruise.jaxb.DataTypeEnum;
 import no.imr.nmd.commons.dataset.jaxb.QualityEnum;
 import no.imr.nmd.commons.dataset.jaxb.RestrictionsType;
 import no.imr.nmdapi.client.loader.dao.Cruise;
@@ -127,12 +128,8 @@ public abstract class Exporter {
 
         //Data types
         DatasetsType types = new DatasetsType();
-
-        boolean hasBiotic = datatypeDAO.countBiotic(cruise.getId()) > 0;
-        boolean hasEchosouder = datatypeDAO.countEchoSounder(cruise.getId()) > 0;
-
-        types.getDataset().add(getDataType("biotic", hasBiotic ? ExistsEnum.YES : ExistsEnum.NO));
-        types.getDataset().add(getDataType("echosounder", hasEchosouder ? ExistsEnum.YES : ExistsEnum.NO));
+        types.getDataset().add(getDataType(DataTypeEnum.BIOTIC, datatypeDAO.hasDatatype(cruiseID, "Biotic")));
+        types.getDataset().add(getDataType(DataTypeEnum.ECHOSOUNDER, datatypeDAO.hasDatatype(cruiseID, "Echosounder")));
 
         cruise.setDatasets(types);
 
@@ -210,7 +207,7 @@ public abstract class Exporter {
         }
     }
 
-    private DatasetType getDataType(String type, ExistsEnum ex) {
+    private DatasetType getDataType(DataTypeEnum type, ExistsEnum ex) {
         DatasetType datatypeElementType = new DatasetType();
         datatypeElementType.setDataType(type);
         datatypeElementType.setCollected(ex);
@@ -237,7 +234,7 @@ public abstract class Exporter {
             } else {
                 no.imr.nmd.commons.dataset.jaxb.DatasetType dataset = new no.imr.nmd.commons.dataset.jaxb.DatasetType();
                 dataset.setId("no:imr:cruise:".concat(java.util.UUID.randomUUID().toString()));
-                dataset.setDataType("cruise");
+                dataset.setDataType(no.imr.nmd.commons.dataset.jaxb.DataTypeEnum.CRUISE);
                 dataset.setDatasetName(name);
                 dataset.setOwner("imr");
                 RestrictionsType restrictionsType = new RestrictionsType();

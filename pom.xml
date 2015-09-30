@@ -81,13 +81,13 @@
         <dependency>
             <groupId>no.imr.nmd.commons.dataset.jaxb</groupId>
             <artifactId>commons-dataset-jaxb</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.8</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>no.imr.nmd.commons.cruise.jaxb</groupId>
             <artifactId>commons-cruise-jaxb</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.7</version>
             <type>jar</type>
         </dependency>
         <dependency>
