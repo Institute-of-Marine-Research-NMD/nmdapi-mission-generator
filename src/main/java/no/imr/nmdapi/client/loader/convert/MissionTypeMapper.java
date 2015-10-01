@@ -21,10 +21,10 @@ public class MissionTypeMapper implements RowMapper<CruiseType> {
     public CruiseType mapRow(ResultSet rs, int i) throws SQLException {
         CruiseType cruise = new CruiseType();
         cruise.setId(rs.getString("id"));
-        cruise.setMissiontype(BigInteger.valueOf(rs.getInt("missiontypecode")));
+        cruise.setCruisetype(BigInteger.valueOf(rs.getInt("missiontypecode")));
         cruise.setStartyear(BigInteger.valueOf(rs.getInt("startyear")));
 
-        cruise.setMissionNumber(BigInteger.valueOf(rs.getInt("missionnumber")));
+        cruise.setCruiseNumber(BigInteger.valueOf(rs.getInt("missionnumber")));
         XMLTypeConverter xmlTypeConverter = new XMLTypeConverter();
         Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         cruise.setStartTime(xmlTypeConverter.convertDate(rs.getTimestamp("start_time", cal)));

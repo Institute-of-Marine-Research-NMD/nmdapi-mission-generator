@@ -27,7 +27,7 @@ public class CamelConfig extends CamelConfiguration implements InitializingBean 
     @Override
     public List<RouteBuilder> routes() {
         List<RouteBuilder> routes = new ArrayList<>();
-        routes.add(initRoute);
+//        routes.add(initRoute);
         routes.add(runRoute);
         return routes;
     }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
+import no.imr.nmd.commons.cruise.jaxb.DataTypeEnum;
 import no.imr.nmd.commons.cruise.jaxb.ExistsEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +17,29 @@ import org.springframework.jdbc.core.RowMapper;
  *
  * @author Terry Hannant
  */
-public class Datatypes {
+public class DatatypesDAO {
+
+    public enum Datatypes {
+
+        BIOTIC(DataTypeEnum.BIOTIC, "Biotic"),
+        ECHOSOUNDER(DataTypeEnum.ECHOSOUNDER, "Echosounder");
+
+        private final String datatype;
+        private final DataTypeEnum dtenum;
+
+        private Datatypes(final DataTypeEnum dtenum, final String datatype) {
+            this.dtenum = dtenum;
+            this.datatype = datatype;
+        }
+
+        public DataTypeEnum getDTEnum() {
+            return dtenum;
+        }
+
+        public String getName() {
+            return datatype;
+        }
+    }
 
     private JdbcTemplate jdbcTemplate;
     private static final String HAS_DATATYPE_QUERY = "select m.name from nmdmission.mission_database_status st, nmdreference.u_udplist m, nmdreference.u_database db where"

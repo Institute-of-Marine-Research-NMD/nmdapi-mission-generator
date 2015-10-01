@@ -3,10 +3,11 @@ package no.imr.nmdapi.client.loader.config;
 import javax.sql.DataSource;
 import no.imr.nmdapi.client.loader.dao.Cruise;
 import no.imr.nmdapi.client.loader.dao.CruiseStatusDAO;
-import no.imr.nmdapi.client.loader.dao.Datatypes;
+import no.imr.nmdapi.client.loader.dao.DatatypesDAO;
 import no.imr.nmdapi.client.loader.dao.Mission;
 import no.imr.nmdapi.client.loader.dao.Platform;
 import no.imr.nmdapi.client.loader.dao.PlatformCodes;
+import no.imr.nmdapi.client.loader.dao.SeaAreaDAO;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,6 @@ public class PersistenceConfig {
         return new Mission();
     }
 
-
     @Bean
     public Cruise cruise() {
         return new Cruise();
@@ -60,12 +60,17 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public Datatypes datatypes() {
-        return new Datatypes();
+    public DatatypesDAO datatypes() {
+        return new DatatypesDAO();
     }
-    
+
     @Bean
-    public CruiseStatusDAO cruisestatus(){
+    public CruiseStatusDAO cruisestatus() {
         return new CruiseStatusDAO();
+    }
+
+    @Bean
+    public SeaAreaDAO seaareadao() {
+        return new SeaAreaDAO();
     }
 }

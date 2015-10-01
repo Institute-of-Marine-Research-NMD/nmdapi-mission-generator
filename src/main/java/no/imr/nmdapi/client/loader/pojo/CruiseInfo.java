@@ -10,7 +10,8 @@ public class CruiseInfo {
     private String cruiseCode;
     private String departPort;
     private String arrivalPort;
-    private String fullName;
+    private String firstName;
+    private String lastName;
     private Integer beicruiseno;
     private String orignalsurveyno;
 
@@ -57,20 +58,6 @@ public class CruiseInfo {
     }
 
     /**
-     * @return the fullName
-     */
-    public String getFullName() {
-        return fullName;
-    }
-
-    /**
-     * @param fullName the fullName to set
-     */
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    /**
      * @return the beicruiseno
      */
     public Integer getBeicruiseno() {
@@ -98,5 +85,32 @@ public class CruiseInfo {
         this.orignalsurveyno = orignalsurveyno;
     }
 
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
 }

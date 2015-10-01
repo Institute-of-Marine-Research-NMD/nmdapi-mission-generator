@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
+import no.imr.nmd.commons.cruise.jaxb.CruiseStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,7 +24,7 @@ public class CruiseStatusDAO {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public String getCruiseStatus(String missionid) {
+    public CruiseStatusEnum getCruiseStatus(String missionid) {
         List<String> result = jdbcTemplate.query(QUERY, new RowMapper<String>() {
 
             @Override
@@ -31,10 +32,19 @@ public class CruiseStatusDAO {
                 return rs.getString("name");
             }
         }, missionid);
-        if (result == null || result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
+        
+        if (result != null && !result.isEmpty()) {
+             switch (result.get(0)) {
+                case "1":
+                    return CruiseStatusEnum.PLANNED;
+                case "2":
+                    return CruiseStatusEnum.PERFORMED;
+                case "3":
+                    return CruiseStatusEnum.CANCELLED;
+                case "4":
+                    return CruiseStatusEnum.CREATED_IN_IMPORT;
+            }
         }
+        return null;
     }
 }

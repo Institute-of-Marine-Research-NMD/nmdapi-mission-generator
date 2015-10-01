@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -21,14 +22,22 @@ import no.imr.nmd.commons.cruise.jaxb.ExistsEnum;
 import no.imr.nmd.commons.cruise.jaxb.PlatformInfoType;
 import no.imr.nmd.commons.cruise.jaxb.PlatformType;
 import no.imr.nmd.commons.cruise.jaxb.DataTypeEnum;
+import no.imr.nmd.commons.cruise.jaxb.PersonCruiseType;
+import no.imr.nmd.commons.cruise.jaxb.PersonsType;
+import no.imr.nmd.commons.cruise.jaxb.PlatformTypeEnum;
+import no.imr.nmd.commons.cruise.jaxb.RoleEnum;
+import no.imr.nmd.commons.cruise.jaxb.RolesType;
+import no.imr.nmd.commons.cruise.jaxb.SeaAreaType;
+import no.imr.nmd.commons.cruise.jaxb.SeaAreasType;
 import no.imr.nmd.commons.dataset.jaxb.QualityEnum;
 import no.imr.nmd.commons.dataset.jaxb.RestrictionsType;
 import no.imr.nmdapi.client.loader.dao.Cruise;
 import no.imr.nmdapi.client.loader.dao.CruiseStatusDAO;
-import no.imr.nmdapi.client.loader.dao.Datatypes;
+import no.imr.nmdapi.client.loader.dao.DatatypesDAO;
 import no.imr.nmdapi.client.loader.dao.Mission;
 import no.imr.nmdapi.client.loader.dao.Platform;
 import no.imr.nmdapi.client.loader.dao.PlatformCodes;
+import no.imr.nmdapi.client.loader.dao.SeaAreaDAO;
 import no.imr.nmdapi.client.loader.pojo.CruiseInfo;
 import no.imr.nmdapi.client.loader.pojo.TypeValue;
 import no.imr.nmdapi.lib.nmdapipathgenerator.PathGenerator;
@@ -59,13 +68,16 @@ public abstract class Exporter {
     private PlatformCodes platformCodeDAO;
 
     @Autowired
-    private Datatypes datatypeDAO;
+    private DatatypesDAO datatypeDAO;
 
     @Autowired
     private Platform platformDAO;
 
     @Autowired
     private CruiseStatusDAO cruisestatus;
+
+    @Autowired
+    private SeaAreaDAO seaAreaDao;
 
     @Autowired
     @Qualifier("cruiseloaderConfig")
@@ -86,57 +98,111 @@ public abstract class Exporter {
      */
     protected void exportSingleCruise(String cruiseID, Mission cruiseDAO) {
         CruiseType cruise = cruiseDAO.getCruise(cruiseID);
+        PersonsType pt = new PersonsType();
+        pt.getPerson().add(cruiseDAO.getCoordinator(cruiseID));
 
-        //Cruise info
+        if (cruise.getCruisetype().intValue() == 4) {
+            cruise.setRented(Boolean.FALSE);
+        } else if (cruise.getCruisetype().intValue() == 5) {
+            cruise.setRented(Boolean.TRUE);
+        }
+
+        addCruiseInformation(cruise, pt);
+
+        cruise.setPersons(pt);
+
+        List<SeaAreaType> seaareas = seaAreaDao.getSeaareas(cruiseID);
+        SeaAreasType seaareasType = new SeaAreasType();
+        seaareasType.getSeaArea().addAll(seaareas);
+        cruise.setSeaAreas(seaareasType);
+
+        cruise.setCruiseStatus(cruisestatus.getCruiseStatus(cruise.getId()));
+
+        //Platform info
+        Map<String, no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue> platMap = addPlatformInformation(cruise);
+
+        //Data types
+        DatasetsType types = new DatasetsType();
+        for (DatatypesDAO.Datatypes datatype : DatatypesDAO.Datatypes.values()) {
+            types.getDataset().add(getDataType(datatype.getDTEnum(), datatypeDAO.hasDatatype(cruiseID, datatype.getName())));
+        }
+        cruise.setDatasets(types);
+
+        PathGenerator pathgen = new PathGenerator();
+        File path = pathgen.generatePath(config.getString("output.path"), cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue()),
+                cruise.getStartyear().toString(), pathgen.createPlatformURICode(platMap), generateCruiseCode(cruise, platformDAO), "cruise");
+        export(path, cruise, pathgen.createPlatformURICode(platMap));
+    }
+
+    private void addCruiseInformation(CruiseType cruise, PersonsType pt) {
         CruiseInfo cruiseinfo = null;
         try {
             cruiseinfo = cruiseMissionDAO.getMissionCruise(cruise.getId());
         } catch (EmptyResultDataAccessException erdae) {
             // Can discard exception as empty set is ok to return
         }
-
+        
         if (cruiseinfo != null) {
             cruise.setArrivalPort(cruiseinfo.getArrivalPort());
             cruise.setDeparturePort(cruiseinfo.getDepartPort());
             cruise.setCruiseCode(cruiseinfo.getCruiseCode());
-            cruise.setCruiseLeader(cruiseinfo.getFullName());
-            cruise.setBeiCruiseNo(cruiseinfo.getBeicruiseno());
+            PersonCruiseType person = new PersonCruiseType();
+            person.setFirstname(cruiseinfo.getFirstName());
+            person.setLastname(cruiseinfo.getLastName());
+            RolesType role = new RolesType();
+            role.getRole().add(RoleEnum.CRUISELEADER);
+            person.setRoles(role);
+            pt.getPerson().add(person);
+            cruise.setBeiCruiseNo(cruiseinfo.getBeicruiseno() == 0 ? null : cruiseinfo.getBeicruiseno());
             cruise.setOriginalSurveyNo(cruiseinfo.getOrignalsurveyno());
-            //sea areas
-            //rented
         }
+    }
 
-        cruise.setMissionStatus(cruisestatus.getCruiseStatus(cruise.getId()));
-
-        //Platform info
+    private Map<String, no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue> addPlatformInformation(CruiseType cruise) {
         Map<String, TypeValue> platformMap = platformCodeDAO.getMissionPlatformCodes(cruise.getId());
         Map<String, no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue> platMap = new HashMap<>();
         if (!platformMap.isEmpty()) {
             PlatformInfoType platformInfo = new PlatformInfoType();
             for (String platform : platformMap.keySet()) {
                 PlatformType platType = new PlatformType();
-                platType.setType(platformMap.get(platform).getType());
+                if (null != platformMap.get(platform).getValue()) {
+                    switch (platformMap.get(platform).getType()) {
+                        case "Ship Name":
+                            platType.setType(PlatformTypeEnum.SHIP_NAME);
+                            break;
+                        case "ITU Call Sign":
+                            platType.setType(PlatformTypeEnum.ITU_CALL_SIGN);
+                            break;
+                        case "ICES Ship Code":
+                            platType.setType(PlatformTypeEnum.ICES_SHIP_CODE);
+                            break;
+                        case "IOC/NODC Ship Code":
+                            platType.setType(PlatformTypeEnum.IOC_NODC_SHIP_CODE);
+                            break;
+                        case "WMO Buoy Identifier":
+                            platType.setType(PlatformTypeEnum.WMO_BUOY_IDENTIFIER);
+                            break;
+                        case "National/local Identifier":
+                            platType.setType(PlatformTypeEnum.NATIONAL_LOCAL_IDENTIFIER);
+                            break;
+                        case "Norwegian Fisheries Register":
+                            platType.setType(PlatformTypeEnum.NORWEGIAN_FISHERIES_REGISTER);
+                            break;
+                        case "ARGO Profiler":
+                            platType.setType(PlatformTypeEnum.ARGO_PROFILER);
+                            break;
+                    }
+                }
                 platType.setValue(platformMap.get(platform).getValue());
                 platformInfo.getPlatform().add(platType);
                 no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue tv = new no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue();
-                tv.setType(platType.getType());
+                tv.setType(platformMap.get(platform).getType());
                 tv.setValue(platType.getValue());
                 platMap.put(tv.getType(), tv);
             }
             cruise.setPlatformInfo(platformInfo);
         }
-
-        //Data types
-        DatasetsType types = new DatasetsType();
-        types.getDataset().add(getDataType(DataTypeEnum.BIOTIC, datatypeDAO.hasDatatype(cruiseID, "Biotic")));
-        types.getDataset().add(getDataType(DataTypeEnum.ECHOSOUNDER, datatypeDAO.hasDatatype(cruiseID, "Echosounder")));
-
-        cruise.setDatasets(types);
-
-        PathGenerator pathgen = new PathGenerator();
-        File path = pathgen.generatePath(config.getString("output.path"), cruiseDAO.getMissionTypeDescription(cruise.getMissiontype().intValue()),
-                cruise.getStartyear().toString(), pathgen.createPlatformURICode(platMap), generateCruiseCode(cruise, platformDAO), "cruise");
-        export(path, cruise, pathgen.createPlatformURICode(platMap));
+        return platMap;
     }
 
     /**
@@ -148,10 +214,10 @@ public abstract class Exporter {
      */
     private String generateCruiseCode(CruiseType cruise, Platform platformDAO) {
         if (cruise.getCruiseCode() == null || cruise.getCruiseCode().trim().length() == 0) {
-            return cruise.getMissiontype().toString() + "-"
+            return cruise.getCruisetype().toString() + "-"
                     + cruise.getStartyear() + "-"
                     + platformDAO.getMissionPlatform(cruise.getId()) + "-"
-                    + cruise.getMissionNumber().toString();
+                    + cruise.getCruiseNumber().toString();
         }
         return cruise.getCruiseCode();
 

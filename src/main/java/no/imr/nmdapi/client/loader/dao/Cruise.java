@@ -18,7 +18,7 @@ public class Cruise {
             + " arrivalport,"
             + " beicruiseno,"
             + " originalsurveyno,"
-            + "  firstname||' '||familyname as fullname"
+            + "  firstname, familyname "
             + " from ("
             + "    select  * "
             + "    from nmdmission.cruisemission"
@@ -31,6 +31,12 @@ public class Cruise {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    /**
+     * Get cruise info for a cruise
+     *
+     * @param missionID
+     * @return
+     */
     public CruiseInfo getMissionCruise(String missionID) {
         return jdbcTemplate.queryForObject(BASE_QUERY_STRING, new CruiseMapper(), missionID);
     }
