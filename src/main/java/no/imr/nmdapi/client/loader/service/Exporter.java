@@ -60,6 +60,8 @@ public abstract class Exporter {
 
     private static final String DATASET_JAXB_PATH = "no.imr.nmd.commons.dataset.jaxb";
     private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
+    private static final int RENTED_VESSEL_CRUISE = 5;
+    private static final int RESEARCH_VESSEL_CRUISE = 4;
 
     @Autowired
     private CruiseInformationDAO cruiseMissionDAO;
@@ -101,9 +103,9 @@ public abstract class Exporter {
         PersonsType pt = new PersonsType();
         pt.getPerson().add(cruiseDAO.getCoordinator(cruiseID));
 
-        if (cruise.getCruisetype().intValue() == 4) {
+        if (cruise.getCruisetype().intValue() == RESEARCH_VESSEL_CRUISE) {
             cruise.setRented(Boolean.FALSE);
-        } else if (cruise.getCruisetype().intValue() == 5) {
+        } else if (cruise.getCruisetype().intValue() == RENTED_VESSEL_CRUISE) {
             cruise.setRented(Boolean.TRUE);
         }
 
@@ -141,7 +143,7 @@ public abstract class Exporter {
         } catch (EmptyResultDataAccessException erdae) {
             // Can discard exception as empty set is ok to return
         }
-        
+
         if (cruiseinfo != null) {
             cruise.setArrivalPort(cruiseinfo.getArrivalPort());
             cruise.setDeparturePort(cruiseinfo.getDepartPort());
