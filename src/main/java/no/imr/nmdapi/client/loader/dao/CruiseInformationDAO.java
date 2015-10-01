@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  *
  * @author Terry Hannant
  */
-public class Cruise {
+public class CruiseInformationDAO {
 
     private JdbcTemplate jdbcTemplate;
     private static final String BASE_QUERY_STRING = " select cruisecode, "

@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.RowMapper;
  *
  * @author Terry Hannant
  */
-public class Mission {
+public class CruiseDAO {
 
     private JdbcTemplate jdbcTemplate;
 

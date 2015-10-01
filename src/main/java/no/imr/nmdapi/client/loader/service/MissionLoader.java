@@ -1,6 +1,6 @@
 package no.imr.nmdapi.client.loader.service;
 
-import no.imr.nmdapi.client.loader.dao.Mission;
+import no.imr.nmdapi.client.loader.dao.CruiseDAO;
 import org.apache.camel.Exchange;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class MissionLoader extends Exporter {
     private static final int MISSION_ID_LOCATION = 2;
 
     @Autowired
-    private Mission missionDAO;
+    private CruiseDAO missionDAO;
 
     /**
      * Loads a single cruise from db to xml based on input, third element of

@@ -1,7 +1,7 @@
 package no.imr.nmdapi.client.loader.service;
 
 import java.util.List;
-import no.imr.nmdapi.client.loader.dao.Mission;
+import no.imr.nmdapi.client.loader.dao.CruiseDAO;
 import org.apache.camel.Exchange;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class ExportCruiseService extends Exporter {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ExportCruiseService.class);
     @Autowired
-    private Mission missionDAO;
+    private CruiseDAO missionDAO;
 
     /**
      * Exports all cruises from nmdmission.mission

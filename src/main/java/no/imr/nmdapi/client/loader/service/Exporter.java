@@ -31,12 +31,12 @@ import no.imr.nmd.commons.cruise.jaxb.SeaAreaType;
 import no.imr.nmd.commons.cruise.jaxb.SeaAreasType;
 import no.imr.nmd.commons.dataset.jaxb.QualityEnum;
 import no.imr.nmd.commons.dataset.jaxb.RestrictionsType;
-import no.imr.nmdapi.client.loader.dao.Cruise;
+import no.imr.nmdapi.client.loader.dao.CruiseInformationDAO;
 import no.imr.nmdapi.client.loader.dao.CruiseStatusDAO;
 import no.imr.nmdapi.client.loader.dao.DatatypesDAO;
-import no.imr.nmdapi.client.loader.dao.Mission;
-import no.imr.nmdapi.client.loader.dao.Platform;
-import no.imr.nmdapi.client.loader.dao.PlatformCodes;
+import no.imr.nmdapi.client.loader.dao.CruiseDAO;
+import no.imr.nmdapi.client.loader.dao.PlatformDAO;
+import no.imr.nmdapi.client.loader.dao.PlatformCodesDAO;
 import no.imr.nmdapi.client.loader.dao.SeaAreaDAO;
 import no.imr.nmdapi.client.loader.pojo.CruiseInfo;
 import no.imr.nmdapi.client.loader.pojo.TypeValue;
@@ -62,16 +62,16 @@ public abstract class Exporter {
     private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
 
     @Autowired
-    private Cruise cruiseMissionDAO;
+    private CruiseInformationDAO cruiseMissionDAO;
 
     @Autowired
-    private PlatformCodes platformCodeDAO;
+    private PlatformCodesDAO platformCodeDAO;
 
     @Autowired
     private DatatypesDAO datatypeDAO;
 
     @Autowired
-    private Platform platformDAO;
+    private PlatformDAO platformDAO;
 
     @Autowired
     private CruiseStatusDAO cruisestatus;
@@ -96,7 +96,7 @@ public abstract class Exporter {
      * @param cruiseID
      * @param cruiseDAO
      */
-    protected void exportSingleCruise(String cruiseID, Mission cruiseDAO) {
+    protected void exportSingleCruise(String cruiseID, CruiseDAO cruiseDAO) {
         CruiseType cruise = cruiseDAO.getCruise(cruiseID);
         PersonsType pt = new PersonsType();
         pt.getPerson().add(cruiseDAO.getCoordinator(cruiseID));
@@ -212,7 +212,7 @@ public abstract class Exporter {
      * @param platformDAO
      * @return
      */
-    private String generateCruiseCode(CruiseType cruise, Platform platformDAO) {
+    private String generateCruiseCode(CruiseType cruise, PlatformDAO platformDAO) {
         if (cruise.getCruiseCode() == null || cruise.getCruiseCode().trim().length() == 0) {
             return cruise.getCruisetype().toString() + "-"
                     + cruise.getStartyear() + "-"

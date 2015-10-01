@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  *
  * @author Terry Hannant
  */
-public class Platform {
+public class PlatformDAO {
 
     private JdbcTemplate jdbcTemplate;
     private static final String BASE_QUERY_STRING = " select platform  "

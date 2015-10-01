@@ -1,12 +1,12 @@
 package no.imr.nmdapi.client.loader.config;
 
 import javax.sql.DataSource;
-import no.imr.nmdapi.client.loader.dao.Cruise;
+import no.imr.nmdapi.client.loader.dao.CruiseInformationDAO;
 import no.imr.nmdapi.client.loader.dao.CruiseStatusDAO;
 import no.imr.nmdapi.client.loader.dao.DatatypesDAO;
-import no.imr.nmdapi.client.loader.dao.Mission;
-import no.imr.nmdapi.client.loader.dao.Platform;
-import no.imr.nmdapi.client.loader.dao.PlatformCodes;
+import no.imr.nmdapi.client.loader.dao.CruiseDAO;
+import no.imr.nmdapi.client.loader.dao.PlatformDAO;
+import no.imr.nmdapi.client.loader.dao.PlatformCodesDAO;
 import no.imr.nmdapi.client.loader.dao.SeaAreaDAO;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -40,23 +40,23 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public Mission mission() {
-        return new Mission();
+    public CruiseDAO mission() {
+        return new CruiseDAO();
     }
 
     @Bean
-    public Cruise cruise() {
-        return new Cruise();
+    public CruiseInformationDAO cruise() {
+        return new CruiseInformationDAO();
     }
 
     @Bean
-    public PlatformCodes platormCodes() {
-        return new PlatformCodes();
+    public PlatformCodesDAO platormCodes() {
+        return new PlatformCodesDAO();
     }
 
     @Bean
-    public Platform platorm() {
-        return new Platform();
+    public PlatformDAO platorm() {
+        return new PlatformDAO();
     }
 
     @Bean

@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  *
  * @author Terry Hannant
  */
-public class PlatformCodes {
+public class PlatformCodesDAO {
 
     private JdbcTemplate jdbcTemplate;
     private static final String BASE_QUERY_STRING = " select platformcode , "
