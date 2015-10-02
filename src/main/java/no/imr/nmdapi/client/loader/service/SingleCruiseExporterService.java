@@ -33,7 +33,6 @@ public class SingleCruiseExporterService {
     public CruiseType loadData(Exchange exchange) {
         String messageBody = exchange.getIn().getBody(String.class);
         LOGGER.info(messageBody.split(",")[MISSION_ID_LOCATION]);
-        CruiseType cruise = createCruise.createCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
-        return cruise;
+        return createCruise.createCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
     }
 }

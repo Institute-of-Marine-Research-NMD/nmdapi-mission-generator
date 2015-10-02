@@ -56,10 +56,9 @@ public class ExportAllCruiseService {
     /**
      * Exports all cruises from nmdmission.mission
      *
-     * @param exchange
      * @return
      */
-    public List<CruiseType> loadData(Exchange exchange) {
+    public List<CruiseType> loadData() {
 
         List<String> missions = cruiseDAO.getAllCruiseId();
         PathGenerator pathgen = new PathGenerator();
@@ -78,12 +77,10 @@ public class ExportAllCruiseService {
 
                 boolean found = false;
                 for (DatasetType datasetType : dataset.getDataset()) {
-                    if (datasetType.getDataType().equals(DataTypeEnum.CRUISE)) {
-                        if (lastUpdated.after(datasetType.getUpdated().toGregorianCalendar().getTime())) {
-                            LOGGER.info("found dataset, time on dataset: " + datasetType.getUpdated().toString() + "  time on db: " + lastUpdated.toString());
-                            updatedMissions.add(cruise);
-                            found = true;
-                        }
+                    if (datasetType.getDataType().equals(DataTypeEnum.CRUISE) && lastUpdated.after(datasetType.getUpdated().toGregorianCalendar().getTime())) {
+                        LOGGER.info("found dataset, time on dataset: " + datasetType.getUpdated().toString() + "  time on db: " + lastUpdated.toString());
+                        updatedMissions.add(cruise);
+                        found = true;
                     }
                 }
 

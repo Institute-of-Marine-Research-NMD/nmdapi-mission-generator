@@ -100,7 +100,6 @@ public class CruiseDAO {
     }
 
     public Date getLastUpdated(String cruiseID) {
-        Date lastUpdated = jdbcTemplate.queryForObject(GET_LAST_UPDATED, Date.class, cruiseID);
-        return lastUpdated;
+        return jdbcTemplate.queryForObject(GET_LAST_UPDATED, Date.class, cruiseID);
     }
 }

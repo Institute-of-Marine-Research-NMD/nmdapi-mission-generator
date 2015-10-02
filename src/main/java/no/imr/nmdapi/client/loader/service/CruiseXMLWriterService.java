@@ -35,7 +35,8 @@ public class CruiseXMLWriterService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CruiseXMLWriterService.class);
 
     private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
-
+    private static final String DATASET_CONTAINER_DELIMITER = "/";
+    
     @Autowired
     private PlatformInformationService platformInformationService;
 
@@ -83,12 +84,7 @@ public class CruiseXMLWriterService {
         exchange.getOut().setHeader("imr:datasetscontainer", cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue()).concat(DATASET_CONTAINER_DELIMITER).
                 concat(cruise.getStartyear().toString()).concat(DATASET_CONTAINER_DELIMITER).concat(pathgen.createPlatformURICode(platMap)).
                 concat(DATASET_CONTAINER_DELIMITER).concat(platformInformationService.generateCruiseCode(cruise, platformDAO)));
-//        exchange.getOut().setHeader("imr:missiontype", cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue()));
-//        exchange.getOut().setHeader("imr:startyear", cruise.getStartyear());
-//        exchange.getOut().setHeader("imr:platform", pathgen.createPlatformURICode(platMap));
-//        exchange.getOut().setHeader("imr:cruisecode", platformInformationService.generateCruiseCode(cruise, platformDAO));
     }
-    private static final String DATASET_CONTAINER_DELIMITER = "/";
 
     /**
      * Exports a single file and generates dataset xml file
