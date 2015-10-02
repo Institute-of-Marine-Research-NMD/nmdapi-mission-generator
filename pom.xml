@@ -5,7 +5,7 @@
     <artifactId>missionGenerator</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>Mission data generator</name>
+    <name>Application - NMDMission loader</name>
     
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>no.imr.nmd.commons.cruise.jaxb</groupId>
             <artifactId>commons-cruise-jaxb</artifactId>
-            <version>1.0.9</version>
+            <version>1.0.10</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -163,7 +163,7 @@
     </dependencies>
     
     <build>
-        <finalName>missionDataGenerator</finalName>
+        <finalName>nmdMissionLoader</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

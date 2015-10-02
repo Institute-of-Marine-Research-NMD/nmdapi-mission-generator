@@ -20,7 +20,10 @@ public class RunRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         onException(Exception.class).continued(true).process(new ExceptionProcessor(configuration.getString("application.name"))).to("jms:queue:error");
-        from("jms:queue:export-nmdmission").to("missionLoader");
+        from("jms:queue:export-nmdmission")
+                .to("singleCruiseExporterService")
+                .to("cruiseXMLWriterService")
+                .to("jms:queue:success");
     }
 
 }

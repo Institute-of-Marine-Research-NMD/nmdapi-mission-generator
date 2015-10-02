@@ -2,11 +2,13 @@ package no.imr.nmdapi.client.loader.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import javax.sql.DataSource;
 import no.imr.nmd.commons.cruise.jaxb.CruiseType;
 import no.imr.nmd.commons.cruise.jaxb.PersonCruiseType;
 import no.imr.nmd.commons.cruise.jaxb.RoleEnum;
+import no.imr.nmd.commons.cruise.jaxb.RoleType;
 import no.imr.nmd.commons.cruise.jaxb.RolesType;
 import no.imr.nmdapi.client.loader.convert.MissionTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,10 @@ public class CruiseDAO {
 
     private static final String GET_MISSION_TYPE_NAME = "select mt.description from "
             + "nmdreference.missiontype mt where mt.code = ? ";
+
+    private static final String GET_LAST_UPDATED = "select max(greatest(m.last_edited, cm.last_edited, ds.last_edited)) from nmdmission.mission m, nmdmission.cruisemission cm "
+            + " ,nmdmission.mission_database_status ds "
+            + "where m.id = ? and cm.id_mission = m.id and ds.id_mission = m.id";
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -82,12 +88,19 @@ public class CruiseDAO {
                         person.setFirstname(rs.getString("firstname"));
                         person.setLastname(rs.getString("familyname"));
                         RolesType role = new RolesType();
-                        role.getRole().add(RoleEnum.CRUISECOORDINATOR);
+                        RoleType roletype = new RoleType();
+                        roletype.setRolename(RoleEnum.CRUISECOORDINATOR);
+                        role.getRole().add(roletype);
                         person.setRoles(role);
                         return person;
                     }
 
                 }, missionID);
         return coordinators.isEmpty() ? null : coordinators.get(0);
+    }
+
+    public Date getLastUpdated(String cruiseID) {
+        Date lastUpdated = jdbcTemplate.queryForObject(GET_LAST_UPDATED, Date.class, cruiseID);
+        return lastUpdated;
     }
 }

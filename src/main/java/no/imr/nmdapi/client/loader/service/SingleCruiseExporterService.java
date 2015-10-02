@@ -1,5 +1,6 @@
 package no.imr.nmdapi.client.loader.service;
 
+import no.imr.nmd.commons.cruise.jaxb.CruiseType;
 import no.imr.nmdapi.client.loader.dao.CruiseDAO;
 import org.apache.camel.Exchange;
 import org.slf4j.LoggerFactory;
@@ -10,25 +11,29 @@ import org.springframework.stereotype.Service;
  *
  * @author sjurl
  */
-@Service("missionLoader")
-public class MissionLoader extends Exporter {
+@Service("singleCruiseExporterService")
+public class SingleCruiseExporterService {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MissionLoader.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SingleCruiseExporterService.class);
     private static final int MISSION_ID_LOCATION = 2;
 
     @Autowired
     private CruiseDAO missionDAO;
 
+    @Autowired
+    private CreateCruise createCruise;
+
     /**
      * Loads a single cruise from db to xml based on input, third element of
      * input (comma delimited) must be a cruise id
      *
-     * @param excahange
+     * @param exchange
+     * @return
      */
-    @Override
-    public void loadData(Exchange excahange) {
-        String messageBody = excahange.getIn().getBody(String.class);
+    public CruiseType loadData(Exchange exchange) {
+        String messageBody = exchange.getIn().getBody(String.class);
         LOGGER.info(messageBody.split(",")[MISSION_ID_LOCATION]);
-        exportSingleCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
+        CruiseType cruise = createCruise.createCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
+        return cruise;
     }
 }
