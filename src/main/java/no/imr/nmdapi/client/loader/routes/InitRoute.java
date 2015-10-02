@@ -19,11 +19,11 @@ public class InitRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        onException(Exception.class).continued(true).process(new ExceptionProcessor(configuration.getString("application.name"))).to("jms:queue:error");
+        onException(Exception.class).continued(true).process(new ExceptionProcessor(configuration.getString("application.name"))).to("jms:queue:".concat(configuration.getString("queue.outgoing.error")));
         from("timer://runOnce?repeatCount=1&delay=5000")
                 .to("exportAllCruiseService")
                 .split(body())
                 .to("cruiseXMLWriterService")
-                .to("jms:queue:update-dataset");
+                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset")));
     }
 }
