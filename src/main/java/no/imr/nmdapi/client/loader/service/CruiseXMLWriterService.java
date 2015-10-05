@@ -74,6 +74,7 @@ public class CruiseXMLWriterService {
         exchange.getOut().setHeader("imr:read", "unrestricted");
         exchange.getOut().setHeader("imr:write", "SG-NMDCRUISE-WRITE");
         exchange.getOut().setHeader("imr:qualityassured", QualityEnum.NONE.toString());
+        exchange.getOut().setHeader("imr:description", "");
         try {
             GregorianCalendar c = new GregorianCalendar();
             c.setTime(Calendar.getInstance().getTime());

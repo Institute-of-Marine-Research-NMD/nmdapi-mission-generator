@@ -24,6 +24,6 @@ public class InitRoute extends RouteBuilder {
                 .to("exportAllCruiseService")
                 .split(body())
                 .to("cruiseXMLWriterService")
-                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset")));
+                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset").concat("?useMessageIDAsCorrelationID=true")));
     }
 }
