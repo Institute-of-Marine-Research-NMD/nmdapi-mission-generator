@@ -81,6 +81,8 @@ public class ExportAllCruiseService {
                         LOGGER.info("found dataset, time on dataset: " + datasetType.getUpdated().toString() + "  time on db: " + lastUpdated.toString());
                         updatedMissions.add(cruise);
                         found = true;
+                    } else if (datasetType.getDataType().equals(DataTypeEnum.CRUISE) && !lastUpdated.after(datasetType.getUpdated().toGregorianCalendar().getTime())) {
+                        found = true;
                     }
                 }
 
