@@ -78,7 +78,7 @@ public class CruiseXMLWriterService {
         try {
             GregorianCalendar c = new GregorianCalendar();
             c.setTime(Calendar.getInstance().getTime());
-            exchange.getOut().setHeader("imr:updated", DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+            exchange.getOut().setHeader("imr:updated", DatatypeFactory.newInstance().newXMLGregorianCalendar(c).toString());
         } catch (DatatypeConfigurationException ex) {
             LOGGER.error("Unable to set updated time on result header", ex);
         }
