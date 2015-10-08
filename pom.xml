@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.imr.nmdapi.client</groupId>
     <artifactId>missionGenerator</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Application - NMDMission loader</name>
     
@@ -221,9 +221,6 @@
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.2</version>
-                <configuration>
-                    <releaseProfiles>release</releaseProfiles>
-                </configuration>
             </plugin>
         </plugins>
     </build>
