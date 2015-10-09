@@ -54,11 +54,6 @@ public class PropertiesConfig {
         return conf;
     }
 
-    @Bean
-    public NMDDatasetDao getNMDDatasetDao() {
-        return new NMDDatasetDaoImpl();
-    }
-
     /**
      * Init route
      *

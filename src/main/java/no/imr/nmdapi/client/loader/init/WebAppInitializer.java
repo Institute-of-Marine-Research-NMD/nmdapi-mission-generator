@@ -34,7 +34,7 @@ public class WebAppInitializer extends AbstractDispatcherServletInitializer {
     @Override
     protected WebApplicationContext createRootApplicationContext() {
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-        ctx.scan("no.imr.nmdapi.client.loader.config", "no.imr.nmdapi.client.loader.service");
+        ctx.scan("no.imr.nmdapi.client.loader.config", "no.imr.nmdapi.client.loader.service", "no.imr.nmdapi.dao.file.config");
         return ctx;
     }
 
