@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class InitRoute extends RouteBuilder {
 
     @Autowired
-    @Qualifier("cruiseloaderConfig")
+    @Qualifier("configuration")
     private PropertiesConfiguration configuration;
 
     @Override

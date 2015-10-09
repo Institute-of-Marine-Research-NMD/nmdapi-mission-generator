@@ -1,7 +1,12 @@
 package no.imr.nmdapi.client.loader.config;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import no.imr.nmdapi.client.loader.routes.InitRoute;
 import no.imr.nmdapi.client.loader.routes.RunRoute;
+import no.imr.nmdapi.dao.file.NMDDatasetDao;
+import no.imr.nmdapi.dao.file.NMDDatasetDaoImpl;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -18,9 +23,9 @@ import org.springframework.context.annotation.Configuration;
 public class PropertiesConfig {
 
     private static final String CATALINA_BASE = "catalina.base";
-
+    private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
     @Autowired
-    @Qualifier("cruiseloaderConfig")
+    @Qualifier("configuration")
     private PropertiesConfiguration configuration;
 
     /**
@@ -49,6 +54,11 @@ public class PropertiesConfig {
         return conf;
     }
 
+    @Bean
+    public NMDDatasetDao getNMDDatasetDao() {
+        return new NMDDatasetDaoImpl();
+    }
+
     /**
      * Init route
      *
@@ -67,5 +77,13 @@ public class PropertiesConfig {
     @Bean
     public RunRoute runRoute() {
         return new RunRoute();
+    }
+
+    @Bean
+    public Marshaller cruiseMarshaller() throws JAXBException {
+        JAXBContext ctx = JAXBContext.newInstance(CRUISE_JAXB_PATH);
+        Marshaller marshaller = ctx.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        return marshaller;
     }
 }

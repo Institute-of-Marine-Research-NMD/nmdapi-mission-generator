@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -36,7 +35,6 @@ public class CruiseXMLWriterService {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CruiseXMLWriterService.class);
 
-    private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
     private static final String DATASET_CONTAINER_DELIMITER = "/";
 
     @Autowired
@@ -52,8 +50,11 @@ public class CruiseXMLWriterService {
     private CruiseDAO cruiseDAO;
 
     @Autowired
-    @Qualifier("cruiseloaderConfig")
+    @Qualifier("configuration")
     private PropertiesConfiguration config;
+
+    @Autowired
+    private Marshaller marshaller;
 
     /**
      * Exports a single cruise
@@ -110,44 +111,17 @@ public class CruiseXMLWriterService {
         String code = platformInformationService.generateCruiseCode(dataset, platformDAO);
         File newFile = new File(FileUtils.getTempDirectory().getAbsolutePath().concat(File.separator).concat(code));
         File oldFile = new File(path.getAbsolutePath());
-        writeCruise(newFile, dataset);
-        if (newFile.exists() && oldFile.exists()) {
-            try {
-                if (FileUtils.checksumCRC32(oldFile) != FileUtils.checksumCRC32(newFile)) {
-                    FileUtils.copyFile(newFile, oldFile);
-                }
-            } catch (IOException ex) {
-                LOGGER.error("Error working on table ".concat(dataset.getCruiseCode()), ex);
-                throw new CantWriteFileException("Unable to ovewrite old file", oldFile, ex);
-            }
-        } else if (newFile.exists() && !oldFile.exists()) {
-            try {
-                FileUtils.copyFile(newFile, oldFile);
-            } catch (IOException ex) {
-                LOGGER.error("Unable to write file " + oldFile.getAbsolutePath(), ex);
-                throw new CantWriteFileException("Unable to copy new file", oldFile, ex);
-            }
+        try {
+            marshaller.marshal(dataset, newFile);
+            FileUtils.copyFile(newFile, oldFile);
+        } catch (JAXBException ex) {
+            LOGGER.error("Unable to marshall dataset ".concat(dataset.getCruiseCode()), ex);
+            throw new CantWriteFileException("Unable to marshall dataset ", oldFile, ex);
+        } catch (IOException ex) {
+            LOGGER.error("Unable to copy file ".concat(dataset.getCruiseCode()), ex);
+            throw new CantWriteFileException("Unable to copy file", oldFile, ex);
         }
         newFile.delete();
-//        LOGGER.info("FINISHED with ".concat(code));
-    }
-
-    /**
-     * Write the cruise file
-     *
-     * @param file
-     * @param mission
-     */
-    private void writeCruise(File file, CruiseType mission) {
-        try {
-            JAXBContext ctx = JAXBContext.newInstance(CRUISE_JAXB_PATH);
-            Marshaller marshaller = ctx.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(mission, file);
-        } catch (JAXBException ex) {
-            LOGGER.info(null, ex);
-            throw new CantWriteFileException("Unable to write cruise to xml file", file, ex);
-        }
     }
 
 }

@@ -24,7 +24,7 @@ public class ApplicationConfig {
      * @return Configuration object containg properties.
      * @throws ConfigurationException Error during instansiation.
      */
-    @Bean(name = "cruiseloaderConfig")
+    @Bean(name = "configuration")
     public PropertiesConfiguration configuration() throws ConfigurationException {
         PropertiesConfiguration configuration = new PropertiesConfiguration(System.getProperty(CATALINA_BASE) + "/conf/export_cruise_loader.properties");
         ReloadingStrategy reloadingStrategy = new FileChangedReloadingStrategy();
