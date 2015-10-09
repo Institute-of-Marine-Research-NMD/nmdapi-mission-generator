@@ -43,7 +43,7 @@ public class WebAppInitializer extends AbstractDispatcherServletInitializer {
         super.onStartup(servletContext);
 
         try {
-            InitalizeLogbackHandler.getInstance().initalize(System.getProperty("catalina.base") + "/conf/mission_data_generator_logback_v1.xml", true);
+            InitalizeLogbackHandler.getInstance().initalize(System.getProperty("catalina.base") + "/conf/export_cruise_loader_logback_v1.xml", true);
         } catch (LoggerInitalizationException ex) {
             LOGGER.error("Logging initializaton failed.", ex);
         }

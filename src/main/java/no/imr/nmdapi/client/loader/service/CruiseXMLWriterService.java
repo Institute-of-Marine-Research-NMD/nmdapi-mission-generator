@@ -15,6 +15,8 @@ import no.imr.nmd.commons.dataset.jaxb.QualityEnum;
 import no.imr.nmdapi.client.loader.dao.CruiseDAO;
 import no.imr.nmdapi.client.loader.dao.PlatformCodesDAO;
 import no.imr.nmdapi.client.loader.dao.PlatformDAO;
+import no.imr.nmdapi.exceptions.CantWriteFileException;
+import no.imr.nmdapi.exceptions.S2DException;
 import no.imr.nmdapi.lib.nmdapipathgenerator.PathGenerator;
 import org.apache.camel.Exchange;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -36,7 +38,7 @@ public class CruiseXMLWriterService {
 
     private static final String CRUISE_JAXB_PATH = "no.imr.nmd.commons.cruise.jaxb";
     private static final String DATASET_CONTAINER_DELIMITER = "/";
-    
+
     @Autowired
     private PlatformInformationService platformInformationService;
 
@@ -81,10 +83,21 @@ public class CruiseXMLWriterService {
             exchange.getOut().setHeader("imr:updated", DatatypeFactory.newInstance().newXMLGregorianCalendar(c).toString());
         } catch (DatatypeConfigurationException ex) {
             LOGGER.error("Unable to set updated time on result header", ex);
+            throw new S2DException("Unable to set updated time on result header", ex);
         }
-        exchange.getOut().setHeader("imr:datasetscontainer", cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue()).concat(DATASET_CONTAINER_DELIMITER).
-                concat(cruise.getStartyear().toString()).concat(DATASET_CONTAINER_DELIMITER).concat(pathgen.createPlatformURICode(platMap)).
-                concat(DATASET_CONTAINER_DELIMITER).concat(platformInformationService.generateCruiseCode(cruise, platformDAO)));
+        try {
+            String missionType = cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue());
+            String startYear = cruise.getStartyear().toString();
+            String platformURI = pathgen.createPlatformURICode(platMap);
+            String cruiseCode = platformInformationService.generateCruiseCode(cruise, platformDAO);
+            String datasetContainer = missionType.concat(DATASET_CONTAINER_DELIMITER).
+                    concat(startYear).concat(DATASET_CONTAINER_DELIMITER).concat(platformURI).
+                    concat(DATASET_CONTAINER_DELIMITER).concat(cruiseCode);
+            exchange.getOut().setHeader("imr:datasetscontainer", datasetContainer);
+            LOGGER.info(datasetContainer);
+        } catch (Exception ex) {
+            throw new RuntimeException("unable to fix cruise " + (platformInformationService.generateCruiseCode(cruise, platformDAO)), ex);
+        }
     }
 
     /**
@@ -105,16 +118,18 @@ public class CruiseXMLWriterService {
                 }
             } catch (IOException ex) {
                 LOGGER.error("Error working on table ".concat(dataset.getCruiseCode()), ex);
+                throw new CantWriteFileException("Unable to ovewrite old file", oldFile, ex);
             }
         } else if (newFile.exists() && !oldFile.exists()) {
             try {
                 FileUtils.copyFile(newFile, oldFile);
             } catch (IOException ex) {
                 LOGGER.error("Unable to write file " + oldFile.getAbsolutePath(), ex);
+                throw new CantWriteFileException("Unable to copy new file", oldFile, ex);
             }
         }
         newFile.delete();
-        LOGGER.info("FINISHED with ".concat(code));
+//        LOGGER.info("FINISHED with ".concat(code));
     }
 
     /**
@@ -131,6 +146,7 @@ public class CruiseXMLWriterService {
             marshaller.marshal(mission, file);
         } catch (JAXBException ex) {
             LOGGER.info(null, ex);
+            throw new CantWriteFileException("Unable to write cruise to xml file", file, ex);
         }
     }
 

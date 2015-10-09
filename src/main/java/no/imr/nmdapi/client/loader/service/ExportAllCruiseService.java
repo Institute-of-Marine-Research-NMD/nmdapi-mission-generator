@@ -16,8 +16,8 @@ import no.imr.nmd.commons.dataset.jaxb.DatasetsType;
 import no.imr.nmdapi.client.loader.dao.CruiseDAO;
 import no.imr.nmdapi.client.loader.dao.PlatformCodesDAO;
 import no.imr.nmdapi.client.loader.dao.PlatformDAO;
+import no.imr.nmdapi.exceptions.S2DException;
 import no.imr.nmdapi.lib.nmdapipathgenerator.PathGenerator;
-import org.apache.camel.Exchange;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +108,7 @@ public class ExportAllCruiseService {
             }
         } catch (JAXBException ex) {
             LOGGER.info(null, ex);
+            throw new S2DException("Unable to unmarshall dataset file " + dataseFile.getAbsolutePath(), ex);
         }
-        return null;
     }
 }

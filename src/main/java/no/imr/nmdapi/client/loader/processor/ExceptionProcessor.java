@@ -35,7 +35,7 @@ public class ExceptionProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         Throwable cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-        ErrorResponseType response = ErrorResponseGenerator.getErrorResponse(name, exchange.getIn().getBody(String.class), new Date(), cause);
+        ErrorResponseType response = ErrorResponseGenerator.getErrorResponse(name, cause.getMessage(), new Date(), cause);
         Marshaller marshaller = JAXBContext.newInstance("no.imr.messaging.errorresponse.domain.v1").createMarshaller();
         StringWriter sw = new StringWriter();
         marshaller.marshal(response, sw);
