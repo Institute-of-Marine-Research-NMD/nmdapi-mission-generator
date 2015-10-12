@@ -20,10 +20,13 @@ public class InitRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         onException(Exception.class).continued(true).process(new ExceptionProcessor(configuration.getString("application.name"))).to("jms:queue:".concat(configuration.getString("queue.outgoing.error")));
+        
         from("timer://runOnce?repeatCount=1&delay=5000")
                 .to("exportAllCruiseService")
                 .split(body())
                 .to("cruiseXMLWriterService")
-                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset").concat("?useMessageIDAsCorrelationID=true")));
+                .multicast()
+                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset").concat("?useMessageIDAsCorrelationID=true")),
+                        "jms:queue:".concat(configuration.getString("queue.outgoing.success")));
     }
 }

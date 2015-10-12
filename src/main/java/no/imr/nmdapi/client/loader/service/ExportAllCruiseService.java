@@ -12,6 +12,7 @@ import no.imr.nmdapi.client.loader.dao.PlatformCodesDAO;
 import no.imr.nmdapi.client.loader.dao.PlatformDAO;
 import no.imr.nmdapi.dao.file.NMDDatasetDao;
 import no.imr.nmdapi.lib.nmdapipathgenerator.PathGenerator;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service("exportAllCruiseService")
 public class ExportAllCruiseService {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ExportAllCruiseService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExportAllCruiseService.class);
 
     @Autowired
     private CruiseDAO cruiseDAO;

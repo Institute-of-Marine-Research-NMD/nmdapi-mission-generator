@@ -23,7 +23,9 @@ public class RunRoute extends RouteBuilder {
         from("jms:queue:".concat(configuration.getString("queue.incoming.export-cruise")))
                 .to("singleCruiseExporterService")
                 .to("cruiseXMLWriterService")
-                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset")).concat("?useMessageIDAsCorrelationID=true"));
+                .multicast()
+                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset")).concat("?useMessageIDAsCorrelationID=true"),
+                        "jms:queue:".concat(configuration.getString("queue.outgoing.success")));
     }
 
 }
