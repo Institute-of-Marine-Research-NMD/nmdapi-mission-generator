@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.imr.nmdapi.client</groupId>
     <artifactId>missionGenerator</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.8</version>
     <packaging>war</packaging>
     <name>Application - NMDMission loader</name>
     
@@ -396,7 +396,7 @@
         <connection>scm:git:git@github.com:Institute-of-Marine-Research-NMD/nmdapi-mission-generator.git</connection>
         <url>scm:git:git@github.com:Institute-of-Marine-Research-NMD/nmdapi-mission-generator.git</url>
         <developerConnection>scm:git:git@github.com:Institute-of-Marine-Research-NMD/nmdapi-mission-generator.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>missionGenerator-1.0.8</tag>
     </scm>
     <distributionManagement>
         <repository>
