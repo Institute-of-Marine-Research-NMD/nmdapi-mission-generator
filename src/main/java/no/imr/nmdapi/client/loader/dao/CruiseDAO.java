@@ -34,9 +34,12 @@ public class CruiseDAO {
     private static final String GET_MISSION_TYPE_NAME = "select mt.description from "
             + "nmdreference.missiontype mt where mt.code = ? ";
 
-    private static final String GET_LAST_UPDATED = "select max(greatest(m.last_edited, cm.last_edited, ds.last_edited)) from nmdmission.mission m, nmdmission.cruisemission cm "
-            + " ,nmdmission.mission_database_status ds "
-            + "where m.id = ? and cm.id_mission = m.id and ds.id_mission = m.id";
+//    private static final String GET_LAST_UPDATED = "select max(greatest(m.last_edited, cm.last_edited, ds.last_edited)) from nmdmission.mission m, nmdmission.cruisemission cm "
+//            + " ,nmdmission.mission_database_status ds "
+//            + "where m.id = ? and cm.id_mission = m.id and ds.id_mission = m.id";
+    private static final String GET_LAST_UPDATED = "select max(last_edited) from ((select m.last_edited from nmdmission.mission m where id = ?) union "
+            + "(select cm.last_edited from nmdmission.cruisemission cm where id_mission = ?) union "
+            + "(select ds.last_edited from nmdmission.mission_database_status ds where id_mission = ?)) a";
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -100,6 +103,6 @@ public class CruiseDAO {
     }
 
     public Date getLastUpdated(String cruiseID) {
-        return jdbcTemplate.queryForObject(GET_LAST_UPDATED, Date.class, cruiseID);
+        return jdbcTemplate.queryForObject(GET_LAST_UPDATED, Date.class, cruiseID, cruiseID, cruiseID);
     }
 }

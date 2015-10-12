@@ -61,7 +61,7 @@ public class ExportAllCruiseService {
             CruiseType cruise = createCruise.createCruise(mission, cruiseDAO);
 
             Map<String, no.imr.nmdapi.lib.nmdapipathgenerator.TypeValue> platMap = platservice.getPlatformcodesForURICode(cruise.getId(), platformcodeDAO);
-            DatasetType datasetType = nmdDatasetDAO.getDatasetByName(DataTypeEnum.CRUISE, "dataset", cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue()),
+            DatasetType datasetType = nmdDatasetDAO.getDatasetByName(DataTypeEnum.CRUISE, "data", cruiseDAO.getMissionTypeDescription(cruise.getCruisetype().intValue()),
                     cruise.getStartyear().toString(), pathgen.createPlatformURICode(platMap), platservice.generateCruiseCode(cruise, platformDAO));
             if (datasetType != null) {
                 if (lastUpdated.after(datasetType.getUpdated().toGregorianCalendar().getTime())) {
