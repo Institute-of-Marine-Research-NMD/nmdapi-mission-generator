@@ -52,7 +52,7 @@ public class CruiseDAO {
      * @return
      */
     public List<String> getAllCruiseId() {
-        return jdbcTemplate.queryForList("SELECT id FROM nmdmission.mission", String.class);
+        return jdbcTemplate.queryForList("SELECT id FROM nmdmission.mission where id_r_missiontype in ('CBA55215BBEE94E4F0FFB413ECE3D638', '676A700418F156DAA7BE75C8A280E3A3')", String.class);
     }
 
     /**

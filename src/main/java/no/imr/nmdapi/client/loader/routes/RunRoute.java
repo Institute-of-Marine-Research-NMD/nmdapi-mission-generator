@@ -22,10 +22,13 @@ public class RunRoute extends RouteBuilder {
         onException(Exception.class).continued(true).process(new ExceptionProcessor(configuration.getString("application.name"))).to("jms:queue:".concat(configuration.getString("queue.outgoing.error")));
         from("jms:queue:".concat(configuration.getString("queue.incoming.export-cruise")))
                 .to("singleCruiseExporterService")
-                .to("cruiseXMLWriterService")
-                .multicast()
-                .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset")).concat("?useMessageIDAsCorrelationID=true"),
-                        "jms:queue:".concat(configuration.getString("queue.outgoing.success")));
+                .choice()
+                .when(body().isNotNull())
+                    .to("cruiseXMLWriterService")
+                    .multicast()
+                        .to("jms:queue:".concat(configuration.getString("queue.outgoing.update-dataset")).concat("?useMessageIDAsCorrelationID=true"),
+                            "jms:queue:".concat(configuration.getString("queue.outgoing.success")))
+                .end();
     }
 
 }

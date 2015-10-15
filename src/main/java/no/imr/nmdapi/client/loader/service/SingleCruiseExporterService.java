@@ -1,5 +1,6 @@
 package no.imr.nmdapi.client.loader.service;
 
+import java.util.List;
 import no.imr.nmd.commons.cruise.jaxb.CruiseType;
 import no.imr.nmdapi.client.loader.dao.CruiseDAO;
 import org.apache.camel.Exchange;
@@ -33,6 +34,11 @@ public class SingleCruiseExporterService {
     public CruiseType loadData(Exchange exchange) {
         String messageBody = exchange.getIn().getBody(String.class);
         LOGGER.info(messageBody.split(",")[MISSION_ID_LOCATION]);
-        return createCruise.createCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
+        List<String> cruises = missionDAO.getAllCruiseId();
+        if (cruises.contains(messageBody.split(",")[MISSION_ID_LOCATION])) {
+            return createCruise.createCruise(messageBody.split(",")[MISSION_ID_LOCATION], missionDAO);
+        } else {
+            return null;
+        }
     }
 }
